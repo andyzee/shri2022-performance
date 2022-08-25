@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const HtmlCriticalWebpackPlugin = require("html-critical-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 const path = require("path");
 
 const dist_dir_name = 'docs';
@@ -45,6 +46,55 @@ module.exports = {
                 test: /\.(jpe?g|png|gif|svg)$/i,
                 type: "asset",
             },
+            {
+                test: /\.(jpe?g|png|gif|svg)$/i,
+                loader: ImageMinimizerPlugin.loader,
+                enforce: "pre",
+                options: {
+                    generator: [
+                        {
+                            preset: "webp",
+                            implementation: ImageMinimizerPlugin.imageminGenerate,
+                            options: {
+                                plugins: ["imagemin-webp"],
+                            },
+                        },
+                    ],
+                },
+            },
         ],
     },
+    optimization: {
+        minimizer: [
+            new ImageMinimizerPlugin({
+                minimizer: {
+                    implementation: ImageMinimizerPlugin.imageminMinify,
+                    options: {
+                        // Lossless optimization with custom option
+                        // Feel free to experiment with options for better result for you
+                        plugins: [
+                            ["gifsicle", { interlaced: true }],
+                            ["jpegtran", { progressive: true }],
+                            ["optipng", { optimizationLevel: 5 }],
+                            // Svgo configuration here https://github.com/svg/svgo#configuration
+                            [
+                                "svgo"
+                            ],
+                        ],
+                    },
+                },
+                generator: [
+                    {
+                        // You can apply generator using `?as=webp`, you can use any name and provide more options
+                        preset: "webp",
+                        implementation: ImageMinimizerPlugin.imageminGenerate,
+                        options: {
+                            plugins: ["imagemin-webp"],
+                        },
+                    },
+                ],
+            }),
+        ],
+    },
+
 };
