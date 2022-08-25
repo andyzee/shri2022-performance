@@ -3,23 +3,26 @@ const HtmlCriticalWebpackPlugin = require("html-critical-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require("path");
 
+const dist_dir_name = 'docs';
+const src_dir_name = 'src';
+
 module.exports = {
     mode: 'production',
     entry: {
-        script: path.resolve(__dirname, "src", "scripts.js"),
+        script: path.resolve(__dirname, src_dir_name, "scripts.js"),
     },
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, dist_dir_name),
         clean: true,
 
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: path.resolve(__dirname, "src", "index.html")
+            template: path.resolve(__dirname, src_dir_name, "index.html")
         }),
         new MiniCssExtractPlugin(),
         new HtmlCriticalWebpackPlugin({
-            base: path.resolve(__dirname, 'dist'),
+            base: path.resolve(__dirname, dist_dir_name),
             src: 'index.html',
             dest: 'index.html',
             inline: true,
